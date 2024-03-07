@@ -1,0 +1,1 @@
+export const FILE_NOT_FOUND_ERROR = 'file with this ID not found';

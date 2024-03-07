@@ -8,6 +8,8 @@ import {JwtModule} from "@nestjs/jwt";
 import {getJWTConfig} from "../configs/jwt.config";
 import {PassportModule} from "@nestjs/passport";
 import {JwtStrategy} from "./strategies/jwt.strategy";
+import {FilesService} from "../files/files.service";
+import {FileModel, FileSchema} from "../files/file.model";
 
 @Module({
     controllers: [AuthController],
@@ -18,6 +20,11 @@ import {JwtStrategy} from "./strategies/jwt.strategy";
                 schema: UserSchema,
                 collection: 'Users'
             },
+            {
+                name: FileModel.name,
+                schema: FileSchema,
+                collection: 'Profiles-pictures',
+            },
         ]),
         JwtModule.registerAsync({
             imports: [ConfigModule],
@@ -27,7 +34,8 @@ import {JwtStrategy} from "./strategies/jwt.strategy";
         ConfigModule,
         PassportModule,
     ],
-    providers: [AuthService, JwtStrategy]
+    providers: [AuthService, JwtStrategy, FilesService],
+    exports: [AuthService]
 })
 export class AuthModule {
 }

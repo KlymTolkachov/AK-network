@@ -11,7 +11,7 @@ export class UserModel {
         description: 'user email, uniq',
         example: 'example@gmail.com'
     })
-    @Prop({isRequired: true, unique: true})
+    @Prop({required: true, unique: true})
     email: string;
 
     @ApiProperty({
@@ -20,6 +20,38 @@ export class UserModel {
     })
     @Prop({required: true})
     passwordHash: string;
+
+    @ApiProperty({
+        description: 'profile picture',
+    })
+    @Prop({required: true})
+    avatar: string;
+
+    @ApiProperty({
+        description: 'user nickname',
+        example: '@Hello',
+    })
+    @Prop({required: true, unique: true})
+    nickname: string;
+
+    @ApiProperty({
+        description: 'user followings',
+    })
+    @Prop()
+    following: [string];
+
+    @ApiProperty({
+        description: 'user followers',
+    })
+    @Prop()
+    followers: [string];
+
+
+    @ApiProperty({
+        description: 'user posts',
+    })
+    @Prop()
+    posts: [string]
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);

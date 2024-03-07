@@ -1,16 +1,30 @@
-import {BadRequestException, Body, Controller, HttpCode, Post, UsePipes, ValidationPipe} from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    HttpCode,
+    Patch,
+    Post, UploadedFile,
+    UseGuards, UseInterceptors,
+    UsePipes,
+    ValidationPipe
+} from '@nestjs/common';
 import {AuthService} from "./auth.service";
-import {ALREADY_REGISTERED_ERROR} from "./auth.constants";
+import {ALREADY_REGISTERED_ERROR, WRONG_NICKNAME_ERROR} from "./auth.constants";
 import {CreateUserDto} from "./dto/create-user.dto";
 import {
     ApiBadRequestResponse,
     ApiCreatedResponse,
-    ApiDefaultResponse,
     ApiOkResponse,
     ApiTags,
     ApiUnauthorizedResponse
 } from "@nestjs/swagger";
 import {UserModel} from "./user.model";
+import {LoginDto} from "./dto/login.dto";
+import {ResetPasswordDto} from "./dto/reset-password.dto";
+import {JwtAuthGuard} from "./guards/jwt.guard";
+import {UserData} from "../decorators/user-data.decorator";
+import {FileInterceptor} from "@nestjs/platform-express";
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -21,13 +35,18 @@ export class AuthController {
     @ApiCreatedResponse({description: 'User created', type: UserModel})
     @ApiBadRequestResponse({description: 'User cann\'t register. Try again!'})
     @UsePipes(new ValidationPipe())
+    @UseInterceptors(FileInterceptor('avatar'))
     @Post('register')
-    async register(@Body() dto: CreateUserDto) {
-        const oldUser = await this.authService.findUser(dto.login);
+    async register(@UploadedFile() file: Express.Multer.File, @Body() dto: CreateUserDto) {
+        const oldUser = await this.authService.findUser(dto.email);
         if (oldUser) {
             throw new BadRequestException(ALREADY_REGISTERED_ERROR);
         }
-        return await this.authService.createUser(dto);
+        const busyNickName = await this.authService.findUserByNickName(dto.nickname)
+        if (busyNickName) {
+            throw new BadRequestException(WRONG_NICKNAME_ERROR);
+        }
+        return await this.authService.createUser(dto, file);
     }
 
     @ApiOkResponse({description: 'User logged in success'})
@@ -36,8 +55,16 @@ export class AuthController {
     @UsePipes(new ValidationPipe())
     @HttpCode(200)
     @Post('login')
-    async login(@Body() {login, password}: CreateUserDto) {
-        const {email} = await this.authService.validateUser(login, password);
-        return this.authService.login(email);
+    async login(@Body() {login, password}: LoginDto) {
+        const {email, id} = await this.authService.validateUser(login, password);
+        return this.authService.login(email, id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @UsePipes(new ValidationPipe())
+    @HttpCode(204)
+    @Patch('reset-password')
+    async resetPassword(@Body() dto: ResetPasswordDto, @UserData() email: string) {
+        return this.authService.resetPassword(dto, email)
     }
 }

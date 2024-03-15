@@ -5,6 +5,8 @@ import {AuthModule} from './auth/auth.module';
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {MongooseModule} from "@nestjs/mongoose";
 import {FilesModule} from "./files/files.module";
+import { UserModule } from './user/user.module';
+import { PostModule } from './post/post.module';
 
 @Module({
     imports: [
@@ -18,6 +20,8 @@ import {FilesModule} from "./files/files.module";
         }),
         AuthModule,
         FilesModule,
+        UserModule,
+        PostModule,
     ],
     controllers: [AppController],
     providers: [AppService],

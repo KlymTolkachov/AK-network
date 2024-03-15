@@ -5,17 +5,19 @@ import {InjectModel} from "@nestjs/mongoose";
 import {JwtService} from "@nestjs/jwt";
 import {Model} from "mongoose";
 import {compare, genSalt, hash} from "bcryptjs";
-import {UserDocument, UserModel} from "./user.model";
+import {UserDocument, UserModel} from "../user/user.model";
 import {ResetPasswordDto} from "./dto/reset-password.dto";
 import {FilesService} from "../files/files.service";
 import {MFile} from "../files/mFile.class";
+import {UserService} from "../user/user.service";
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectModel(UserModel.name) private readonly userModel: Model<UserDocument>,
         private readonly jwtService: JwtService,
-        private readonly fileService: FilesService
+        private readonly fileService: FilesService,
+        private readonly userService: UserService,
     ) {
     }
 
@@ -54,13 +56,14 @@ export class AuthService {
         if (!isCorrectPassword) {
             throw new UnauthorizedException(WRONG_PASSWORD_ERROR);
         }
-        return {email: user.email, id: user.id};
+        return {email: user.email, id: String(user._id)};
     }
 
     async login(email: string, id: string) {
         const payload = {email, id};
         return {
             accessToken: await this.jwtService.signAsync(payload),
+            user: await this.userService.findById(id)
         };
     }
 

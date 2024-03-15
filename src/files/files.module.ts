@@ -5,7 +5,7 @@ import {ServeStaticModule} from '@nestjs/serve-static';
 import path from 'app-root-path';
 import {MongooseModule} from '@nestjs/mongoose';
 import {FileModel, FileSchema} from './file.model';
-import {UserModel, UserSchema} from "../auth/user.model";
+import {UserModel, UserSchema} from "../user/user.model";
 import {AuthModule} from "../auth/auth.module";
 
 

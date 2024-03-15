@@ -15,9 +15,10 @@ export class FilesService {
         const res: FileElementResponse[] = [];
 
         for (const file of files) {
+            const buffer = await this.convertToWebP(file.buffer)
             const newFile = new this.fileModel({
                 name: file.originalname,
-                data: file.buffer,
+                data: buffer,
                 owner: id
             });
             const savedFile = await newFile.save();

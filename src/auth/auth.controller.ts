@@ -19,7 +19,7 @@ import {
     ApiTags,
     ApiUnauthorizedResponse
 } from "@nestjs/swagger";
-import {UserModel} from "./user.model";
+import {UserModel} from "../user/user.model";
 import {LoginDto} from "./dto/login.dto";
 import {ResetPasswordDto} from "./dto/reset-password.dto";
 import {JwtAuthGuard} from "./guards/jwt.guard";
@@ -64,7 +64,8 @@ export class AuthController {
     @UsePipes(new ValidationPipe())
     @HttpCode(204)
     @Patch('reset-password')
-    async resetPassword(@Body() dto: ResetPasswordDto, @UserData() email: string) {
+    async resetPassword(@Body() dto: ResetPasswordDto, @UserData() {email, id}) {
+        console.log(email, id)
         return this.authService.resetPassword(dto, email)
     }
 }

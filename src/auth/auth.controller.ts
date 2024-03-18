@@ -65,7 +65,6 @@ export class AuthController {
     @HttpCode(204)
     @Patch('reset-password')
     async resetPassword(@Body() dto: ResetPasswordDto, @UserData() {email, id}) {
-        console.log(email, id)
         return this.authService.resetPassword(dto, email)
     }
 }

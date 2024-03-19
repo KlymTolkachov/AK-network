@@ -11,13 +11,12 @@ import {FilesService} from './files.service';
 import {MFile} from './mFile.class';
 import {JwtAuthGuard} from "../auth/guards/jwt.guard";
 import {AuthService} from "../auth/auth.service";
-
-import {ensureDir, writeFile} from "fs-extra";
 import * as sharp from 'sharp';
-import * as fs from "fs";
 import {FILE_NOT_FOUND_ERROR} from "./file.constants";
 import {IdValidationPipe} from "../pipes/id-validation.pipe";
+import {ApiTags} from "@nestjs/swagger";
 
+@ApiTags('Files')
 @Controller('files')
 export class FilesController {
     constructor(private readonly filesService: FilesService,

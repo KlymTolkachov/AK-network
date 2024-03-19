@@ -23,6 +23,7 @@ export class UserModel {
 
     @ApiProperty({
         description: 'profile picture',
+        example: 'avatar.jpeg'
     })
     @Prop({required: true})
     avatar: string;

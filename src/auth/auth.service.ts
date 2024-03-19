@@ -63,7 +63,7 @@ export class AuthService {
         const payload = {email, id};
         const user = await this.userService.findById(id);
         delete user['passwordHash'];
-        console.log(user)
+        // console.log(user)
         return {
             accessToken: await this.jwtService.signAsync(payload),
             user,

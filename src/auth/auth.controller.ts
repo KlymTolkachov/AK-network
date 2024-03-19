@@ -60,11 +60,14 @@ export class AuthController {
         return this.authService.login(email, id);
     }
 
+    @ApiOkResponse({description: 'User changed password success'})
+    @ApiBadRequestResponse({description: 'Invalid data'})
+    @ApiUnauthorizedResponse({description: 'Unauthorized'})
     @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe())
-    @HttpCode(204)
+    // @HttpCode(204)
     @Patch('reset-password')
-    async resetPassword(@Body() dto: ResetPasswordDto, @UserData() {email, id}) {
+    async resetPassword(@Body() dto: ResetPasswordDto, @UserData() {email}) {
         return this.authService.resetPassword(dto, email)
     }
 }

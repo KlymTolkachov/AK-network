@@ -1,9 +1,12 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {PostDocument, PostModel} from "./post.model";
 import {Model} from "mongoose";
 import {CreatePostDto} from "./dto/create-post.dto";
 import {UserDocument, UserModel} from "../user/user.model";
+import {POST_NOT_FOUND_ERROR} from "./post.constants";
+import {ObjectId} from "mongodb";
+import {UpdatePostDto} from "./dto/update-post.dto";
 
 @Injectable()
 export class PostService {
@@ -16,5 +19,21 @@ export class PostService {
         const savedPost = await post.save();
         await this.userModel.findByIdAndUpdate(id, {$push: {posts: savedPost.id}}, {new: true});
         return savedPost;
+    }
+
+    async delete(postId: string, id: string) {
+        const post = await this.postModel.findByIdAndDelete(postId).exec();
+        await this.userModel.updateOne({_id: new ObjectId(id)}, {$pull: {posts: postId}})
+        if (!post) {
+            throw new NotFoundException(POST_NOT_FOUND_ERROR)
+        }
+    }
+
+    async update(postId: string, dto: UpdatePostDto) {
+        const post = await this.postModel.findByIdAndUpdate(postId, dto, {new: true}).exec();
+        if (!post) {
+            throw new NotFoundException(POST_NOT_FOUND_ERROR)
+        }
+        return post;
     }
 }

@@ -1,0 +1,1 @@
+export const POST_NOT_FOUND_ERROR = 'Post with this id not found';

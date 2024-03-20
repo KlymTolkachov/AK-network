@@ -19,10 +19,28 @@ export class FilesService {
             const newFile = new this.fileModel({
                 name: file.originalname,
                 data: buffer,
-                owner: id
+                owner: id,
+                type: 'avatar'
             });
             const savedFile = await newFile.save();
             res.push({id: savedFile.id, name: savedFile.name})
+        }
+        return res;
+    }
+
+    async savePostPhotos(files: Express.Multer.File[], id: string): Promise<Pick<FileElementResponse, 'id'>[]> {
+        const res: Pick<FileElementResponse, 'id'>[] = [];
+
+        for (const file of files) {
+            const buffer = await this.convertToWebP(file.buffer)
+            const newFile = new this.fileModel({
+                name: file.originalname,
+                data: buffer,
+                owner: id,
+                type: 'post'
+            });
+            const savedFile = await newFile.save();
+            res.push({id: savedFile.id})
         }
         return res;
     }

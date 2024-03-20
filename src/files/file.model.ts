@@ -14,6 +14,9 @@ export class FileModel {
 
     @Prop({type: Buffer})
     data: Buffer;
+
+    @Prop()
+    type: 'post' | 'avatar';
 }
 
 export const FileSchema = SchemaFactory.createForClass(FileModel);

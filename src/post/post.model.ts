@@ -8,6 +8,13 @@ export type PostDocument = HydratedDocument<PostModel>
 @Schema({timestamps: true, versionKey: false})
 export class PostModel {
     @ApiProperty({
+        description: 'post photos',
+        example: 'My picture'
+    })
+    @Prop({required: true})
+    photos: [string];
+
+    @ApiProperty({
         description: 'post title',
         example: 'My post title'
     })
@@ -41,6 +48,8 @@ export class PostModel {
     @Prop({type: Types.ObjectId, ref: 'Users', required: true})
     owner: UserModel;
 
+    @Prop({default: false})
+    saved: boolean;
 }
 
 export const PostSchema = SchemaFactory.createForClass(PostModel);

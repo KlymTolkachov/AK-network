@@ -5,8 +5,8 @@ import {
     HttpCode,
     Param,
     Patch,
-    Post,
-    UseGuards,
+    Post, UploadedFiles,
+    UseGuards, UseInterceptors,
     UsePipes,
     ValidationPipe
 } from '@nestjs/common';
@@ -24,6 +24,7 @@ import {
     ApiUnauthorizedResponse
 } from "@nestjs/swagger";
 import {PostModel} from "./post.model";
+import {FilesInterceptor} from "@nestjs/platform-express";
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -36,9 +37,11 @@ export class PostController {
     @ApiUnauthorizedResponse({description: 'Unauthorized'})
     @UsePipes(new ValidationPipe())
     @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FilesInterceptor('photos', 5))
     @Post('/')
-    async create(@Body() dto: CreatePostDto, @UserData() {id}) {
-        return this.postService.create(dto, id);
+    async create(@UploadedFiles() files: Express.Multer.File[], @Body() dto: CreatePostDto, @UserData() {id}) {
+        console.log(files)
+        return this.postService.create(dto, id, files);
     }
 
     @ApiNoContentResponse({description: 'User deleted post success', status: 204})

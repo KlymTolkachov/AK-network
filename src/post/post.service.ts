@@ -7,18 +7,23 @@ import {UserDocument, UserModel} from "../user/user.model";
 import {POST_NOT_FOUND_ERROR} from "./post.constants";
 import {ObjectId} from "mongodb";
 import {UpdatePostDto} from "./dto/update-post.dto";
+import {FilesService} from "../files/files.service";
 
 @Injectable()
 export class PostService {
     constructor(@InjectModel(PostModel.name) private readonly postModel: Model<PostDocument>,
-                @InjectModel(UserModel.name) private readonly userModel: Model<UserDocument>,) {
+                @InjectModel(UserModel.name) private readonly userModel: Model<UserDocument>,
+                private readonly filesService: FilesService) {
     }
 
-    async create(dto: CreatePostDto, id: string) {
+    async create(dto: CreatePostDto, id: string, files) {
         const post = new this.postModel({...dto, owner: id});
         const savedPost = await post.save();
         await this.userModel.findByIdAndUpdate(id, {$push: {posts: savedPost.id}}, {new: true});
-        return savedPost;
+
+        const filesId = await this.filesService.savePostPhotos(files, savedPost.id);
+        return this.postModel.findByIdAndUpdate(savedPost.id, {photos: filesId}, {new: true});
+
     }
 
     async delete(postId: string, id: string) {

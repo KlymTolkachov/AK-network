@@ -23,7 +23,6 @@ export class PostService {
 
         const filesId = await this.filesService.savePostPhotos(files, savedPost.id);
         return this.postModel.findByIdAndUpdate(savedPost.id, {photos: filesId}, {new: true});
-
     }
 
     async delete(postId: string, id: string) {

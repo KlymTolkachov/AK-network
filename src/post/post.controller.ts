@@ -40,7 +40,6 @@ export class PostController {
     @UseInterceptors(FilesInterceptor('photos', 5))
     @Post('/')
     async create(@UploadedFiles() files: Express.Multer.File[], @Body() dto: CreatePostDto, @UserData() {id}) {
-        console.log(files)
         return this.postService.create(dto, id, files);
     }
 

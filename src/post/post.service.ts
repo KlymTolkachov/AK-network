@@ -40,4 +40,17 @@ export class PostService {
         }
         return post;
     }
+
+
+    async findById(id: string) {
+        const post = await this.postModel.findById(id).exec();
+        if (!post) {
+            throw new NotFoundException(POST_NOT_FOUND_ERROR)
+        }
+        return post;
+    }
+
+    async findByUser(id: string, skip, limit) {
+        return await this.postModel.find({owner: id}).skip(skip).limit(limit).exec();
+    }
 }

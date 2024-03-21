@@ -1,11 +1,11 @@
 import {
     Body,
     Controller,
-    Delete,
+    Delete, Get,
     HttpCode,
     Param,
     Patch,
-    Post, UploadedFiles,
+    Post, Query, UploadedFiles,
     UseGuards, UseInterceptors,
     UsePipes,
     ValidationPipe
@@ -18,7 +18,7 @@ import {IdValidationPipe} from "../pipes/id-validation.pipe";
 import {UpdatePostDto} from "./dto/update-post.dto";
 import {
     ApiBadRequestResponse, ApiCreatedResponse,
-    ApiNoContentResponse,
+    ApiNoContentResponse, ApiNotFoundResponse,
     ApiOkResponse,
     ApiTags,
     ApiUnauthorizedResponse
@@ -61,5 +61,24 @@ export class PostController {
     @Patch(':id')
     async update(@Param('id', IdValidationPipe) postId: string, @Body() dto: UpdatePostDto) {
         return this.postService.update(postId, dto);
+    }
+
+    @ApiOkResponse({description: 'User updated post success', type: PostModel})
+    @ApiNotFoundResponse({description: 'Page not found'})
+    @ApiBadRequestResponse({description: 'Invalid Id'})
+    @ApiUnauthorizedResponse({description: 'Unauthorized'})
+    @UseGuards(JwtAuthGuard)
+    @Get(':id')
+    async findById(@Param('id', IdValidationPipe) id: string) {
+        return this.postService.findById(id);
+    }
+
+
+    @ApiOkResponse({description: 'All posts', type: [PostModel]})
+    @ApiUnauthorizedResponse({description: 'Unauthorized'})
+    @UseGuards(JwtAuthGuard)
+    @Get('/')
+    async feedOfPosts(@UserData() {id}, @Query() {limit, skip}) {
+        return this.postService.findByUser(id, skip, limit);
     }
 }

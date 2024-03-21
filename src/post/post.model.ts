@@ -48,6 +48,10 @@ export class PostModel {
     @Prop({type: Types.ObjectId, ref: 'Users', required: true})
     owner: UserModel;
 
+    @ApiProperty({
+        description: 'is post in saved folder',
+        example: 'true'
+    })
     @Prop({default: false})
     saved: boolean;
 }

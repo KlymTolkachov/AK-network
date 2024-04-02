@@ -50,7 +50,13 @@ export class PostService {
         return post;
     }
 
-    async findByUser(id: string, skip, limit) {
-        return await this.postModel.find({owner: id}).skip(skip).limit(limit).exec();
+    async feedOfPosts(skip = 0, limit = 10) {
+        return await this.postModel.aggregate([
+            {
+                $sort: {
+                    updatedAt: -1
+                }
+            }
+        ]).skip(+skip).limit(+limit).exec();
     }
 }

@@ -19,7 +19,7 @@ import {UpdatePostDto} from "./dto/update-post.dto";
 import {
     ApiBadRequestResponse, ApiCreatedResponse,
     ApiNoContentResponse, ApiNotFoundResponse,
-    ApiOkResponse,
+    ApiOkResponse, ApiQuery,
     ApiTags,
     ApiUnauthorizedResponse
 } from "@nestjs/swagger";
@@ -78,7 +78,7 @@ export class PostController {
     @ApiUnauthorizedResponse({description: 'Unauthorized'})
     @UseGuards(JwtAuthGuard)
     @Get('/')
-    async feedOfPosts(@UserData() {id}, @Query() {limit, skip}) {
-        return this.postService.findByUser(id, skip, limit);
+    async feedOfPosts(@Query() {limit, skip}) {
+        return this.postService.feedOfPosts(skip, limit);
     }
 }

@@ -29,6 +29,12 @@ export class UserModel {
     avatar: string;
 
     @ApiProperty({
+        description: 'icon',
+    })
+    @Prop({required: true})
+    icon: Buffer;
+
+    @ApiProperty({
         description: 'user nickname',
         example: '@Hello',
     })

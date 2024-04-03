@@ -27,12 +27,17 @@ export class AuthService {
             email: dto.email,
             passwordHash: await hash(dto.password, salt),
             nickname: dto.nickname,
-            avatar: 'avatar.jpeg'
+            avatar: 'avatar.jpeg',
+            icon: 'icon'
         });
         const savedUser = await newUser.save();
         if (avatar) {
-            const savedAvatar = await this.fileService.saveFiles([new MFile(avatar)], String(savedUser.id))
-            return this.userModel.findByIdAndUpdate(savedUser.id, {avatar: savedAvatar[0].id}, {new: true})
+            const savedAvatar = await this.fileService.saveFiles([new MFile(avatar)], String(savedUser.id));
+            const icon = await this.fileService.resizeToIcon(avatar.buffer);
+            return this.userModel.findByIdAndUpdate(savedUser.id, {
+                avatar: savedAvatar[0].id,
+                icon
+            }, {new: true})
         }
         return savedUser
     }

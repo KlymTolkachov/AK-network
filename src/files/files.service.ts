@@ -49,6 +49,10 @@ export class FilesService {
         return sharp(file).webp().toBuffer();
     }
 
+    resizeToIcon(file: Buffer): Promise<Buffer> {
+        return sharp(file).resize(25, 25).toBuffer()
+    }
+
     async downloadFile(id: string) {
         return this.fileModel.findById(id);
     }

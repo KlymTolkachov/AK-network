@@ -8,6 +8,7 @@ import {POST_NOT_FOUND_ERROR} from "./post.constants";
 import {ObjectId} from "mongodb";
 import {UpdatePostDto} from "./dto/update-post.dto";
 import {FilesService} from "../files/files.service";
+import {UpdateStatusPostDto} from "./dto/update-status-post.dto";
 
 @Injectable()
 export class PostService {
@@ -58,5 +59,16 @@ export class PostService {
                 }
             }
         ]).skip(+skip).limit(+limit).exec();
+    }
+
+
+    async toggleStatus(id: string, dto, userId) {
+        await this.findById(id);
+        dto.saved ? dto.saved = {$not: '$saved'} : null;
+        dto.archived ? dto.archived = {$not: '$archived'} : null;
+        if (dto.likes) {
+
+        }
+        return this.postModel.findByIdAndUpdate(id, [{$set: dto}], {new: true});
     }
 }

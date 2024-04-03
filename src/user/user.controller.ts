@@ -1,4 +1,4 @@
-import {Controller, Get, NotFoundException, UseGuards} from '@nestjs/common';
+import {Controller, Get, NotFoundException, Param, UseGuards} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {UserData} from "../decorators/user-data.decorator";
 import {USER_NOT_FOUND_ERROR} from "./user.constants";
@@ -17,6 +17,17 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @Get('/')
     async find(@UserData() {id}) {
+        const user = this.userService.findById(id);
+        if (!user) {
+            throw new NotFoundException(USER_NOT_FOUND_ERROR);
+        }
+        return user;
+    }
+
+    @ApiOkResponse({description: 'User', type: UserModel})
+    @ApiUnauthorizedResponse({description: 'Unauthorized'})
+    @Get('/:id')
+    async findById(@Param('id') id: string) {
         const user = this.userService.findById(id);
         if (!user) {
             throw new NotFoundException(USER_NOT_FOUND_ERROR);

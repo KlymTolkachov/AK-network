@@ -25,6 +25,7 @@ import {
 } from "@nestjs/swagger";
 import {PostModel} from "./post.model";
 import {FilesInterceptor} from "@nestjs/platform-express";
+import {UpdateStatusPostDto} from "./dto/update-status-post.dto";
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -81,4 +82,14 @@ export class PostController {
     async feedOfPosts(@Query() {limit, skip}) {
         return this.postService.feedOfPosts(skip, limit);
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch('/:postId/status')
+    async toggleStatus(@Param('postId', IdValidationPipe) postId: string,
+                       @Body() dto: UpdateStatusPostDto,
+                       @UserData() {id}) {
+        return this.postService.toggleStatus(postId, dto, id)
+    }
+
+
 }

@@ -54,6 +54,13 @@ export class PostModel {
     })
     @Prop({default: false})
     saved: boolean;
+
+    @ApiProperty({
+        description: 'is post in archived folder',
+        example: 'false'
+    })
+    @Prop({default: false})
+    archived: boolean;
 }
 
 export const PostSchema = SchemaFactory.createForClass(PostModel);

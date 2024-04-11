@@ -12,6 +12,10 @@ export class UserService {
         return this.userModel.findById(id).exec();
     }
 
+    async findByNickname(nickname: string) {
+        return this.userModel.findOne({nickname}).exec();
+    }
+
     async getFollowers(id: string) {
         return this.userModel.aggregate([])
     }

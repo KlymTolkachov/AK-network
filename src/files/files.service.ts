@@ -50,7 +50,7 @@ export class FilesService {
     }
 
     resizeToIcon(file: Buffer): Promise<Buffer> {
-        return sharp(file).resize(25, 25).toBuffer()
+        return sharp(file).resize(44, 44).toBuffer()
     }
 
     async downloadFile(id: string) {

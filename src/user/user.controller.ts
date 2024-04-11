@@ -34,4 +34,15 @@ export class UserController {
         }
         return user;
     }
+
+    @ApiOkResponse({description: 'User', type: UserModel})
+    @ApiUnauthorizedResponse({description: 'Unauthorized'})
+    @Get('nickname/:nickname')
+    async findByNickname(@Param('nickname') nickname: string) {
+        const user = await this.userService.findByNickname(nickname);
+        if (!user) {
+            throw new NotFoundException(USER_NOT_FOUND_ERROR);
+        }
+        return user;
+    }
 }
